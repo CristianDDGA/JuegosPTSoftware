@@ -57,15 +57,5 @@ El proyecto está dividido en 4 capas estrictas. **Regla de oro: Las capas inter
 
 ---
 
-## 🚀 Guía de Trabajo (Evitando desastres en Git)
 
-**⚠️ REGLA ESTRICTA: NUNCA HAGAS COMMIT DIRECTO A LA RAMA `main`.**
-
-Para evitar conflictos y no romper la compilación del menú principal, sigue estos pasos:
-
-### Paso 1: Clona y crea tu propia rama
-Abre tu terminal y ejecuta:
-```bash
-git clone <URL_DEL_REPOSITORIO>
-cd PatronesBusquedaFISEI
 git checkout -b feature/tu-nombre-juego
