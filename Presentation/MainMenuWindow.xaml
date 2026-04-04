@@ -6,7 +6,7 @@
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
         <TextBlock Text="MENÚ PRINCIPAL" FontSize="24" FontWeight="Bold" Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
-        <Button Content="1. N Reinas " Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White"/>
+        <Button Content="1. N Reinas (Jumbo)" Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White"/>
         <Button Content="2. Caballo Ajedrez " Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White" Click="Button_Click"/>
         <Button Content="3. Laberinto " Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White"/>
         <Button Content="4. Agente Viajero " Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White"/>

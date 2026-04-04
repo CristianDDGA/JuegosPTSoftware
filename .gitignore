@@ -1,0 +1,29 @@
+﻿# Carpetas de configuración local de Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Configuracion local de VS Code
+.vscode/
+
+# Carpetas de compilación de .NET (Archivos binarios y objetos)
+[Bb]in/
+[Oo]bj/
+
+# Resultados de pruebas
+[Tt]est[Rr]esult*/
+[Bb]enchmark[Rr]esult*/
+
+# Archivos de cache y herramientas
+*.cache
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Paquetes y artefactos de publish
+*.nupkg
+*.snupkg
+[Pp]ublish/
