@@ -1,0 +1,108 @@
+﻿<Window x:Class="Presentation.NReinasWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="N-Queens: Protocolo Backtracking" Height="650" Width="550"
+        WindowStartupLocation="CenterScreen" Background="#0D0D0D">
+
+    <Window.Resources>
+        <Style x:Key="NeonActionStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="#00FFCC"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderBrush" Value="#00FFCC"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,5"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#00FFCC"/>
+                                <Setter Property="Foreground" Value="#0D0D0D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#FF0055"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="N-QUEENS PROTOCOL" FontSize="32" FontWeight="Black" 
+                       Foreground="#00FFCC" HorizontalAlignment="Center">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="#00FFCC" BlurRadius="15" ShadowDepth="0"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <TextBlock Text="SISTEMA DE RESOLUCIÓN BACKTRACKING" FontSize="12" 
+                       Foreground="#FF0055" HorizontalAlignment="Center">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="#FF0055" BlurRadius="10" ShadowDepth="0"/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </StackPanel>
+
+        <Border Grid.Row="1" BorderBrush="#333" BorderThickness="0,1" Padding="0,20" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="VALOR N:" Foreground="White" VerticalAlignment="Center" 
+                           FontWeight="Bold" Margin="0,0,15,0"/>
+                <TextBox x:Name="txtN" Width="60" Height="35" Background="#1A1A1A" 
+                         Foreground="White" BorderBrush="#FF0055" BorderThickness="1"
+                         VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                         FontSize="16" Text="4"/>
+
+                <Button x:Name="btnResolver" Content="INICIAR SECUENCIA" 
+                        Click="btnResolver_Click" Style="{StaticResource NeonActionStyle}" 
+                        Margin="20,0,0,0" Height="35"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="#050505" BorderBrush="#1A1A1A" BorderThickness="2" CornerRadius="5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="15">
+                <TextBlock x:Name="txtResultado" Text="A la espera de parámetros..." 
+                           Foreground="#00FFCC" FontFamily="Consolas" FontSize="14" 
+                           TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+
+        <Button Grid.Row="3" x:Name="btnVolver" Content="[ ABORTAR Y VOLVER ]" 
+                Click="BtnVolver_Click" Style="{StaticResource BackButtonStyle}"
+                Margin="0,20,0,0" HorizontalAlignment="Left" FontSize="12" Cursor="Hand"/>
+    </Grid>
+</Window>

@@ -32,8 +32,10 @@ public partial class MainMenuWindow : Window
         this.Close();
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void btnAbrirNReinas_Click(object sender, RoutedEventArgs e)
     {
-
+        NReinasWindow ventanaReinas = new NReinasWindow();
+        ventanaReinas.Show();
+        this.Close();
     }
 }
