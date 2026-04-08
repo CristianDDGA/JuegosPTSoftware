@@ -1,0 +1,77 @@
+<Window x:Class="Presentation.ProblemaCaballoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Reto del Caballo" Height="600" Width="700" WindowStartupLocation="CenterScreen" Background="#0D0D0D">
+
+    <Window.Resources>
+        <Style x:Key="CellButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderBrush" Value="#00FFCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF0055"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#FF0055" BlurRadius="15" ShadowDepth="0"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="RETO DEL CABALLO" FontSize="28" FontWeight="Black" Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,15">
+            <TextBlock.Effect>
+                <DropShadowEffect Color="#00FFCC" BlurRadius="20" ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <TextBlock x:Name="txtProgress" FontSize="16" FontWeight="Bold" Foreground="#FF0055" HorizontalAlignment="Center" Margin="0,0,0,15">Casillas visitadas: 0 de 64</TextBlock>
+
+        <UniformGrid x:Name="BoardGrid" Rows="8" Columns="8" Width="400" Height="400" Margin="0,0,0,20">
+        </UniformGrid>
+
+        <Button x:Name="btnRestart" Content="REINICIAR" Width="140" Height="40" HorizontalAlignment="Center" Margin="0,0,0,20" Click="BtnRestart_Click" Style="{StaticResource ActionButtonStyle}"/>
+
+        <Button Content="VOLVER AL MENÚ" Width="200" Height="30" HorizontalAlignment="Center"
+                Click="BtnVolver_Click" Background="Transparent" 
+                Foreground="White" BorderBrush="White" BorderThickness="1" 
+                Cursor="Hand" FontSize="12"/>
+    </StackPanel>
+</Window>

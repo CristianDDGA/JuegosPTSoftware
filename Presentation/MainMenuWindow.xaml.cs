@@ -38,4 +38,19 @@ public partial class MainMenuWindow : Window
         ventanaReinas.Show();
         this.Close();
     }
+
+    private void btnAbrirCaballo_Click(object sender, RoutedEventArgs e)
+    {
+        // Abrir la ventana del Problema del Caballo
+        try
+        {
+            var ventana = new ProblemaCaballoWindow();
+            ventana.Show();
+            this.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error al abrir la ventana del Caballo: {ex.Message}");
+        }
+    }
 }
