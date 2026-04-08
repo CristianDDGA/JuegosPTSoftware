@@ -53,7 +53,12 @@ public partial class MainMenuWindow : Window
             MessageBox.Show($"Error al abrir la ventana del Caballo: {ex.Message}");
         }
     }
-
+    private void btnAbrirViajero_Click(object sender, RoutedEventArgs e)
+    {
+        ProblemaViajeroWindow ventanaViajero = new ProblemaViajeroWindow();
+        ventanaViajero.Show();
+        this.Close();
+    }
     private void BtnLaberinto_Click(object sender, RoutedEventArgs e)
     {
         MazeWindow ventanaLaberinto = new MazeWindow();

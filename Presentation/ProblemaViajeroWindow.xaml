@@ -1,0 +1,36 @@
+﻿<Window x:Class="Presentation.ProblemaViajeroWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Problema del Viajero - Branch and Bound" Height="450" Width="400"
+        WindowStartupLocation="CenterScreen" Background="#121212">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="EL AGENTE VIAJERO" FontSize="22" FontWeight="Bold" 
+                   Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="0" Text="(5 Ciudades)" FontSize="14" Foreground="Gray" 
+                   HorizontalAlignment="Center" Margin="0,30,0,15"/>
+
+        <Button Grid.Row="1" x:Name="btnResolver" Content="Calcular Ruta Óptima" 
+                Height="35" Background="#1A1A1A" Foreground="White" FontWeight="Bold" 
+                Click="btnResolver_Click" Margin="0,0,0,15" BorderBrush="#00FFCC" BorderThickness="1"/>
+
+        <Border Grid.Row="2" BorderBrush="#333" BorderThickness="1" Background="#1E1E1E" Padding="10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="txtResultado" Foreground="#00FFCC" FontSize="14" 
+                           FontFamily="Consolas" TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+
+        <Button Grid.Row="3" x:Name="BtnVolver" Content="Volver al Menú" 
+                Height="35" Background="#FF3333" Foreground="White" FontWeight="Bold" 
+                Click="BtnVolver_Click" Margin="0,15,0,0"/>
+    </Grid>
+</Window>
