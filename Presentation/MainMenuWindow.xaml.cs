@@ -38,4 +38,10 @@ public partial class MainMenuWindow : Window
         ventanaReinas.Show();
         this.Close();
     }
+    private void BtnLaberinto_Click(object sender, RoutedEventArgs e)
+    {
+        MazeWindow ventanaLaberinto = new MazeWindow();
+        ventanaLaberinto.Show();
+        this.Close();
+    }
 }
