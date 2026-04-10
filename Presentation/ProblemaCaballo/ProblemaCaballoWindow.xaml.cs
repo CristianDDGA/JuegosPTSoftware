@@ -3,11 +3,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Application.ProblemaCaballo;
+using Presentation.MainMenu;
 
-namespace Presentation;
+namespace Presentation.ProblemaCaballo;
 
 public partial class ProblemaCaballoWindow : Window
 {
+    private readonly App _app;
+    private readonly IProblemaCaballoUseCase _useCase;
     private const int Size = 8;
     private readonly Button[,] _cells = new Button[Size, Size];
     private readonly CellState[,] _states = new CellState[Size, Size];
@@ -16,11 +20,10 @@ public partial class ProblemaCaballoWindow : Window
     private int _visitedCount = 0;
     private bool _gameStarted = false;
 
-    private readonly int[] dr = new int[] { -2, -1, 1, 2, 2, 1, -1, -2 };
-    private readonly int[] dc = new int[] { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    public ProblemaCaballoWindow()
+    public ProblemaCaballoWindow(App app, IProblemaCaballoUseCase useCase)
     {
+        _app = app;
+        _useCase = useCase;
         InitializeComponent();
         BuildBoard();
         ResetBoard();
@@ -110,9 +113,11 @@ public partial class ProblemaCaballoWindow : Window
             }
 
         // compute new usable moves
-        var moves = GetValidKnightMoves(_currentRow, _currentCol);
-        foreach (var (r, c) in moves)
+        var moves = _useCase.ObtenerMovimientosValidos(Size, BuildEstadoTablero(), _currentRow, _currentCol);
+        foreach (var move in moves)
         {
+            var r = move.Row;
+            var c = move.Col;
             _states[r, c] = CellState.Usable;
             _cells[r, c].Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2196F3"));
             _cells[r, c].Content = string.Empty;
@@ -131,19 +136,18 @@ public partial class ProblemaCaballoWindow : Window
         }
     }
 
-    private System.Collections.Generic.List<(int r, int c)> GetValidKnightMoves(int r, int c)
+    private int[,] BuildEstadoTablero()
     {
-        var list = new System.Collections.Generic.List<(int r, int c)>();
-        for (int k = 0; k < 8; k++)
+        var estado = new int[Size, Size];
+        for (int r = 0; r < Size; r++)
         {
-            int nr = r + dr[k];
-            int nc = c + dc[k];
-            if (nr >= 0 && nr < Size && nc >= 0 && nc < Size && _states[nr, nc] != CellState.Visited && _states[nr, nc] != CellState.Current)
+            for (int c = 0; c < Size; c++)
             {
-                list.Add((nr, nc));
+                estado[r, c] = _states[r, c] is CellState.Visited or CellState.Current ? 1 : -1;
             }
         }
-        return list;
+
+        return estado;
     }
 
     private void Cell_Click(object? sender, RoutedEventArgs e)
@@ -186,9 +190,8 @@ public partial class ProblemaCaballoWindow : Window
 
     private void BtnVolver_Click(object sender, RoutedEventArgs e)
     {
-        MainMenuWindow menu = new MainMenuWindow();
+        MainMenuWindow menu = _app.CreateMainMenuWindow();
         menu.Show();
         this.Close();
     }
 }
-

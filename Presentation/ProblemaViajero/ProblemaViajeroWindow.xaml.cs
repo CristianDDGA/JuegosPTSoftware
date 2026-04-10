@@ -1,5 +1,6 @@
-﻿using Application.ProblemaViajero;
+using Application.ProblemaViajero;
 using Domain.ProblemaViajero;
+using Presentation.MainMenu;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,16 +13,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Presentation
+namespace Presentation.ProblemaViajero
 {
     public partial class ProblemaViajeroWindow : Window
     {
+        private readonly App _app;
         private readonly IViajeroUseCase _viajeroUseCase;
 
-        public ProblemaViajeroWindow()
+        public ProblemaViajeroWindow(App app, IViajeroUseCase viajeroUseCase)
         {
+            _app = app;
             InitializeComponent();
-            _viajeroUseCase = new ViajeroUseCase();
+            _viajeroUseCase = viajeroUseCase;
         }
 
         private void btnResolver_Click(object sender, RoutedEventArgs e)
@@ -44,7 +47,7 @@ namespace Presentation
             string reporte = "=== REPORTE DETALLADO DEL VIAJE ===\n\n";
 
             reporte += "1. MATRIZ DE DISTANCIAS (El Mapa)\n";
-            reporte += resultado.MapaVisual + "\n";
+            reporte += FormatearMatriz(distancias) + "\n";
 
             string rutaLetras = string.Join(" -> ", resultado.RutaOptima.ConvertAll(c => (char)('A' + c)));
             reporte += "2. RUTA MÁS EFICIENTE\n";
@@ -61,9 +64,36 @@ namespace Presentation
         }
         private void BtnVolver_Click(object sender, RoutedEventArgs e)
         {
-            MainMenuWindow menu = new MainMenuWindow();
+            MainMenuWindow menu = _app.CreateMainMenuWindow();
             menu.Show();
             this.Close();
+        }
+
+        private static string FormatearMatriz(int[,] matriz)
+        {
+            int n = matriz.GetLength(0);
+            var sb = new StringBuilder();
+            sb.Append("     ");
+            for (int i = 0; i < n; i++)
+            {
+                sb.Append($"{(char)('A' + i),2}  ");
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("   ---------------------");
+
+            for (int i = 0; i < n; i++)
+            {
+                sb.Append($"{(char)('A' + i)} | ");
+                for (int j = 0; j < n; j++)
+                {
+                    sb.Append($"{matriz[i, j],2}  ");
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
     }
 }

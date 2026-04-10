@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Domain.ProblemaCaballo;
 
 namespace Application.ProblemaCaballo;
 
@@ -21,6 +22,22 @@ public class ProblemaCaballoUseCase : IProblemaCaballoUseCase
             return board;
 
         return null!; // no solution
+    }
+
+    public List<KnightMove> ObtenerMovimientosValidos(int n, int[,] estadoTablero, int row, int col)
+    {
+        var moves = new List<KnightMove>();
+        for (int k = 0; k < 8; k++)
+        {
+            int nr = row + dr[k];
+            int nc = col + dc[k];
+            if (nr >= 0 && nr < n && nc >= 0 && nc < n && estadoTablero[nr, nc] < 0)
+            {
+                moves.Add(new KnightMove(nr, nc));
+            }
+        }
+
+        return moves;
     }
 
     private bool IsValid(int r, int c, int n, int[,] board)

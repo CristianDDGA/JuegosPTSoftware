@@ -1,5 +1,6 @@
-﻿using Application.TicTacToe;
+using Application.TicTacToe;
 using Domain.TicTacToe;
+using Presentation.MainMenu;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,23 +12,25 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Presentation;
+namespace Presentation.TicTacToe;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class TicTacToeWindow : Window
 {
+    private readonly App _app;
     private readonly ITicTacToeUseCase _useCase;
 
     // Definimos los colores neón usando SolidColorBrush
     private readonly SolidColorBrush colorX = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00FFCC")); // Cian
     private readonly SolidColorBrush colorO = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF0055")); // Rosa Neón
 
-    public TicTacToeWindow()
+    public TicTacToeWindow(App app, ITicTacToeUseCase useCase)
     {
+        _app = app;
         InitializeComponent();
-        _useCase = new TicTacToeUseCase();
+        _useCase = useCase;
         UpdateUI();
     }
 
@@ -36,7 +39,8 @@ public partial class TicTacToeWindow : Window
         if (_useCase.GetCurrentStatus() != GameStatus.InProgress) return;
 
         Button clickedButton = (Button)sender;
-        string[] coords = clickedButton.Tag.ToString().Split(',');
+        if (clickedButton.Tag is not string tagValue) return;
+        string[] coords = tagValue.Split(',');
         int row = int.Parse(coords[0]);
         int col = int.Parse(coords[1]);
 
@@ -106,7 +110,7 @@ public partial class TicTacToeWindow : Window
 
     private void BtnVolver_Click(object sender, RoutedEventArgs e)
     {
-        MainMenuWindow menu = new MainMenuWindow();
+        MainMenuWindow menu = _app.CreateMainMenuWindow();
         menu.Show();
         this.Close();
     }

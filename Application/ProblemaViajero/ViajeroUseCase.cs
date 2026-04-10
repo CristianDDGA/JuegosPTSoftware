@@ -8,9 +8,9 @@ namespace Application.ProblemaViajero;
 public class ViajeroUseCase : IViajeroUseCase
 {
     private int _n;
-    private int[,]? _distancias;
+    private int[,] _distancias = new int[0, 0];
     private int _mejorDistancia;
-    private List<int>?_mejorRuta;
+    private List<int> _mejorRuta = new List<int>();
 
     public ViajeroResult CalcularMejorRuta(int[,] matrizDistancias)
     {
@@ -21,20 +21,6 @@ public class ViajeroUseCase : IViajeroUseCase
 
         var rutaInicial = new List<int> { 0 };
         ExplorarRutas(0, 1, rutaInicial, 0);
-
-        // --- LÓGICA DE DIBUJO MOVIDA AQUÍ ---
-        string mapa = "     A   B   C   D   E\n";
-        mapa += "   ---------------------\n";
-        for (int i = 0; i < _n; i++)
-        {
-            mapa += $"{(char)('A' + i)} | ";
-            for (int j = 0; j < _n; j++)
-            {
-                mapa += $"{_distancias[i, j],2}  ";
-            }
-            mapa += "\n";
-        }
-        // ------------------------------------
 
         var pasos = new List<string>();
         for (int i = 0; i < _mejorRuta.Count - 1; i++)
@@ -48,8 +34,7 @@ public class ViajeroUseCase : IViajeroUseCase
         {
             RutaOptima = _mejorRuta,
             DistanciaTotal = _mejorDistancia,
-            DesglosePasos = pasos,
-            MapaVisual = mapa // Enviamos el mapa ya dibujado
+            DesglosePasos = pasos
         };
     }
 

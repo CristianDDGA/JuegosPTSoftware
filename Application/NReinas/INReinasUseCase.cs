@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.NReinas;
 
 namespace Application.NReinas;
 public interface INReinasUseCase
 {
-    List<int[]> Resolver(int n);
+    List<NReinasSolution> Resolver(int n);
 }

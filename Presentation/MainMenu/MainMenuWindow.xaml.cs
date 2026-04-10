@@ -1,4 +1,9 @@
-﻿using System;
+using Presentation.Maze;
+using Presentation.NReinas;
+using Presentation.ProblemaCaballo;
+using Presentation.ProblemaViajero;
+using Presentation.TicTacToe;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -10,22 +15,24 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Presentation;
+namespace Presentation.MainMenu;
 
 /// <summary>
 /// Lógica de interacción para MainMenuWindow.xaml
 /// </summary>
 public partial class MainMenuWindow : Window
 {
-    public MainMenuWindow()
+    private readonly App _app;
+
+    public MainMenuWindow(App app)
     {
+        _app = app;
         InitializeComponent();
     }
 
     private void BtnTicTacToe_Click(object sender, RoutedEventArgs e)
     {
-        // Instanciamos y mostramos tu ventana
-        TicTacToeWindow ticTacToe = new TicTacToeWindow();
+        TicTacToeWindow ticTacToe = _app.CreateTicTacToeWindow();
         ticTacToe.Show();
 
         // Cerramos el menú
@@ -34,7 +41,7 @@ public partial class MainMenuWindow : Window
 
     private void btnAbrirNReinas_Click(object sender, RoutedEventArgs e)
     {
-        NReinasWindow ventanaReinas = new NReinasWindow();
+        NReinasWindow ventanaReinas = _app.CreateNReinasWindow();
         ventanaReinas.Show();
         this.Close();
     }
@@ -44,7 +51,7 @@ public partial class MainMenuWindow : Window
         // Abrir la ventana del Problema del Caballo
         try
         {
-            var ventana = new ProblemaCaballoWindow();
+            var ventana = _app.CreateProblemaCaballoWindow();
             ventana.Show();
             this.Close();
         }
@@ -55,13 +62,13 @@ public partial class MainMenuWindow : Window
     }
     private void btnAbrirViajero_Click(object sender, RoutedEventArgs e)
     {
-        ProblemaViajeroWindow ventanaViajero = new ProblemaViajeroWindow();
+        ProblemaViajeroWindow ventanaViajero = _app.CreateProblemaViajeroWindow();
         ventanaViajero.Show();
         this.Close();
     }
     private void BtnLaberinto_Click(object sender, RoutedEventArgs e)
     {
-        MazeWindow ventanaLaberinto = new MazeWindow();
+        MazeWindow ventanaLaberinto = _app.CreateMazeWindow();
         ventanaLaberinto.Show();
         this.Close();
     }

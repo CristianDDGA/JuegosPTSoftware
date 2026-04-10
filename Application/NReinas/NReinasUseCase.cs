@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Domain.NReinas;
 
 namespace Application.NReinas;
 public class NReinasUseCase : INReinasUseCase
 {
-    private List<int[]>?soluciones;
+    private List<int[]> soluciones = new List<int[]>();
 
-    public List<int[]> Resolver(int n)
+    public List<NReinasSolution> Resolver(int n)
     {
         soluciones = new List<int[]>();
         int[] tablero = new int[n];
         Backtracking(tablero, 0, n);
-        return soluciones;
+        var result = new List<NReinasSolution>(soluciones.Count);
+        foreach (var solucion in soluciones)
+        {
+            result.Add(new NReinasSolution((int[])solucion.Clone()));
+        }
+
+        return result;
     }
 
     private void Backtracking(int[] tablero, int fila, int n)

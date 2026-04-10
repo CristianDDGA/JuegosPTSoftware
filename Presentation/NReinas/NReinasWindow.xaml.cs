@@ -1,19 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using Application.NReinas; // Asegúrate de que el namespace sea correcto
+using Domain.NReinas;
+using Presentation.MainMenu;
 
-namespace Presentation
+namespace Presentation.NReinas
 {
     public partial class NReinasWindow : Window
     {
+        private readonly App _app;
         // Instanciamos el UseCase (Capa de Aplicación)
         private readonly INReinasUseCase _nReinasUseCase;
 
-        public NReinasWindow()
+        public NReinasWindow(App app, INReinasUseCase nReinasUseCase)
         {
+            _app = app;
             InitializeComponent();
-            _nReinasUseCase = new NReinasUseCase();
+            _nReinasUseCase = nReinasUseCase;
         }
 
         private void btnResolver_Click(object sender, RoutedEventArgs e)
@@ -35,20 +39,21 @@ namespace Presentation
             }
         }
 
-        private void MostrarEnConsolaYPantalla(List<int[]> soluciones, int n)
+        private void MostrarEnConsolaYPantalla(List<NReinasSolution> soluciones, int n)
         {
             string reporte = $"Se encontraron {soluciones.Count} soluciones para N={n}:\n\n";
             Console.WriteLine(reporte);
 
             foreach (var sol in soluciones)
             {
+                var queenColumns = sol.QueenColumnsByRow;
                 string tableroVisual = "";
                 for (int i = 0; i < n; i++)
                 {
                     string fila = "";
                     for (int j = 0; j < n; j++)
                     {
-                        fila += (sol[i] == j) ? " Q " : " . ";
+                        fila += (queenColumns[i] == j) ? " Q " : " . ";
                     }
                     tableroVisual += fila + "\n";
                     Console.WriteLine(fila);
@@ -61,7 +66,7 @@ namespace Presentation
         }
         private void BtnVolver_Click(object sender, RoutedEventArgs e)
         {
-            MainMenuWindow menu = new MainMenuWindow();
+            MainMenuWindow menu = _app.CreateMainMenuWindow();
             menu.Show();
             this.Close();
         }

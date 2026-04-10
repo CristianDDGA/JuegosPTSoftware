@@ -10,15 +10,11 @@ public class ViajeroResult
     public int DistanciaTotal { get; set; }
     public List<string> DesglosePasos { get; set; }
 
-    // NUEVO: Aquí guardaremos el string de la matriz ya dibujada
-    public string MapaVisual { get; set; }
-
     public ViajeroResult()
     {
         RutaOptima = new List<int>();
         DesglosePasos = new List<string>();
         DistanciaTotal = int.MaxValue;
-        MapaVisual = string.Empty;
     }
 }
 

@@ -8,13 +8,15 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Application.Maze;
 using Domain.Maze;
+using Presentation.MainMenu;
 
-namespace Presentation;
+namespace Presentation.Maze;
 
 public partial class MazeWindow : Window
 {
-    private MazeBoard _board;
-    private IMazeUseCase _useCase;
+    private readonly App _app;
+    private MazeBoard _board = null!;
+    private readonly IMazeUseCase _useCase;
     private (int, int) _start = (0, 0);
     private (int, int) _end = (3, 3);
     private (int, int) _playerPosition;
@@ -22,96 +24,25 @@ public partial class MazeWindow : Window
     private bool _isGameOver;
     private CancellationTokenSource? _cancellationSource;
 
-    public MazeWindow()
+    public MazeWindow(App app, IMazeUseCase useCase)
     {
+        _app = app;
         InitializeComponent();
-        _useCase = new MazeUseCase();
+        _useCase = useCase;
         _cells = new List<Rectangle>();
-
-        GenerarLaberintoJugable(25, 25); // Tamaño más grande para mayor complejidad
+        GenerarLaberintoJugable(25, 25);
     }
 
     private void GenerarLaberintoJugable(int rows, int cols)
     {
-        // Aseguramos dimensiones impares para el algoritmo de paredes de Backtracking
-        if (rows % 2 == 0) rows++;
-        if (cols % 2 == 0) cols++;
-
-        int[,] grid = new int[rows, cols];
-
-        // 1. Llenar todo de paredes (1)
-        for (int r = 0; r < rows; r++)
-            for (int c = 0; c < cols; c++)
-                grid[r, c] = 1;
-
-        Random rnd = new Random();
-
-        // 2. Esculpir caminos desde una posición inicial impar (1, 1)
-        CarvePassagesFrom(1, 1, grid, rnd);
-
-        // 2.5 Añadir complejidad: derribar algunas paredes adicionales (Braid Maze) 
-        // para tener múltiples rutas y evitar un único camino obvio y largo.
-        int wallsToRemove = (rows * cols) / 20; // 5% de las celdas
-        while (wallsToRemove > 0)
-        {
-            int r = rnd.Next(1, rows - 1);
-            int c = rnd.Next(1, cols - 1);
-
-            // Si es pared, verificar que no rompa los bordes
-            if (grid[r, c] == 1)
-            {
-                // Solo derribar paredes internas
-                if (r > 1 && r < rows - 2 && c > 1 && c < cols - 2)
-                {
-                    grid[r, c] = 0;
-                    wallsToRemove--;
-                }
-            }
-        }
-
-        // 3. Establecer inicio y fin
-        _start = (1, 1);
-        _end = (rows - 2, cols - 2);
-        grid[_end.Item1, _end.Item2] = 0; // Asegurar que la meta es camino
-
-        _board = new MazeBoard(grid);
+        var mazeConfig = _useCase.GeneratePlayableMaze(rows, cols);
+        _board = mazeConfig.board;
+        _start = mazeConfig.start;
+        _end = mazeConfig.end;
         _playerPosition = _start;
         _isGameOver = false;
 
         DrawMaze();
-    }
-
-    private void CarvePassagesFrom(int r, int c, int[,] grid, Random rnd)
-    {
-        grid[r, c] = 0; // Marcar como camino
-
-        // Direcciones: Arriba, Abajo, Izquierda, Derecha
-        int[] dr = { -2, 2, 0, 0 };
-        int[] dc = { 0, 0, -2, 2 };
-
-        // Aleatorizar el orden de las direcciones
-        int[] dirs = { 0, 1, 2, 3 };
-        for (int i = dirs.Length - 1; i > 0; i--)
-        {
-            int j = rnd.Next(i + 1);
-            int temp = dirs[i]; dirs[i] = dirs[j]; dirs[j] = temp;
-        }
-
-        foreach (var dir in dirs)
-        {
-            int nr = r + dr[dir];
-            int nc = c + dc[dir];
-
-            // Validar que está dentro de los límites
-            if (nr > 0 && nr < grid.GetLength(0) - 1 && nc > 0 && nc < grid.GetLength(1) - 1)
-            {
-                if (grid[nr, nc] == 1) // Si el destino sigue siendo pared
-                {
-                    grid[r + (dr[dir] / 2), c + (dc[dir] / 2)] = 0; // Romper pared intermedia
-                    CarvePassagesFrom(nr, nc, grid, rnd); // Llamada recursiva
-                }
-            }
-        }
     }
 
     private void DrawMaze()
@@ -228,7 +159,7 @@ public partial class MazeWindow : Window
     private void BtnBack_Click(object sender, RoutedEventArgs e)
     {
         _cancellationSource?.Cancel();
-        MainMenuWindow menu = new MainMenuWindow();
+        MainMenuWindow menu = _app.CreateMainMenuWindow();
         menu.Show();
         this.Close();
     }
