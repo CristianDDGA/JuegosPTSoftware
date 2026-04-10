@@ -66,22 +66,32 @@ public class ViajeroUseCase : IViajeroUseCase
             return;
         }
 
-        // RAMIFICACIÓN
-        for (int siguienteCiudad = 0; siguienteCiudad < _n; siguienteCiudad++)
+        // RAMIFICACIÓN + ORDENAMIENTO:
+        // exploramos primero las ciudades más cercanas para encontrar antes
+        // buenas soluciones y podar más ramas.
+        var candidatos = new List<int>();
+        for (int ciudad = 0; ciudad < _n; ciudad++)
         {
-            if (!rutaActual.Contains(siguienteCiudad))
+            if (!rutaActual.Contains(ciudad))
             {
-                rutaActual.Add(siguienteCiudad);
-
-                ExplorarRutas(
-                    siguienteCiudad,
-                    ciudadesVisitadas + 1,
-                    rutaActual,
-                    distanciaActual + _distancias[ciudadActual, siguienteCiudad]
-                );
-
-                rutaActual.RemoveAt(rutaActual.Count - 1);
+                candidatos.Add(ciudad);
             }
+        }
+
+        candidatos.Sort((a, b) => _distancias[ciudadActual, a].CompareTo(_distancias[ciudadActual, b]));
+
+        foreach (int siguienteCiudad in candidatos)
+        {
+            rutaActual.Add(siguienteCiudad);
+
+            ExplorarRutas(
+                siguienteCiudad,
+                ciudadesVisitadas + 1,
+                rutaActual,
+                distanciaActual + _distancias[ciudadActual, siguienteCiudad]
+            );
+
+            rutaActual.RemoveAt(rutaActual.Count - 1);
         }
     }
 }
