@@ -7,10 +7,9 @@
         <TextBlock Text="MENÚ PRINCIPAL" FontSize="24" FontWeight="Bold" Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
         <Button Content="1. N Reinas (Jumbo)" Margin="0,5" Height="35" Background="Coral" Foreground="White" Click="btnAbrirNReinas_Click"/>
-        <Button Content="2. Caballo Ajedrez" Margin="0,5" Height="35" Background="#2196F3" Foreground="White" Click="btnAbrirCaballo_Click"/>
-        <Button Content="3. Laberinto" Margin="0,5" Height="35" Background="#00AAFF" Foreground="White" FontWeight="Bold" Click="BtnLaberinto_Click"/>
-        <Button Content="4. Agente Viajero(Miranda) " Margin="0,5" Height="35" Background="#1A1A1A" Foreground="White" Click="btnAbrirViajero_Click"/>
-
-        <Button Content="5. Tic-Tac-Toe (Cristian)" Margin="0,20,0,5" Height="40" Background="#FF0055" Foreground="White" FontWeight="Bold" Click="BtnTicTacToe_Click"/>
+        <Button Content="2. Caballo Ajedrez (Matias)" Margin="0,5" Height="35" Background="#62E548" Foreground="White" Click="btnAbrirCaballo_Click"/>
+        <Button Content="3. Laberinto (Alexis)" Margin="0,5" Height="35" Background="#00AAFF" Foreground="White" FontWeight="Bold" Click="BtnLaberinto_Click"/>
+        <Button Content="4. Agente Viajero (Miranda)" Margin="0,5" Height="35" Background="#D15FE8" Foreground="White" Click="btnAbrirViajero_Click"/>
+        <Button Content="5. Tic-Tac-Toe (Cristian)" Margin="0,5" Height="35" Background="#FF0055" Foreground="White" FontWeight="Bold" Click="BtnTicTacToe_Click"/>
     </StackPanel>
 </Window>
