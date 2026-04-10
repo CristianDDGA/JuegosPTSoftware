@@ -12,9 +12,9 @@ public partial class ProblemaCaballoWindow : Window
 {
     private readonly App _app;
     private readonly IProblemaCaballoUseCase _useCase;
-    private const int Size = 8;
-    private readonly Button[,] _cells = new Button[Size, Size];
-    private readonly CellState[,] _states = new CellState[Size, Size];
+    private int _boardSize = 8;
+    private Button[,] _cells = new Button[0, 0];
+    private CellState[,] _states = new CellState[0, 0];
     private int _currentRow = -1;
     private int _currentCol = -1;
     private int _visitedCount = 0;
@@ -25,6 +25,8 @@ public partial class ProblemaCaballoWindow : Window
         _app = app;
         _useCase = useCase;
         InitializeComponent();
+        _cells = new Button[_boardSize, _boardSize];
+        _states = new CellState[_boardSize, _boardSize];
         BuildBoard();
         ResetBoard();
     }
@@ -33,12 +35,15 @@ public partial class ProblemaCaballoWindow : Window
 
     private void BuildBoard()
     {
-        BoardGrid.Rows = Size;
-        BoardGrid.Columns = Size;
+        BoardGrid.Children.Clear();
+        BoardGrid.Rows = _boardSize;
+        BoardGrid.Columns = _boardSize;
+        _cells = new Button[_boardSize, _boardSize];
+        _states = new CellState[_boardSize, _boardSize];
 
-        for (int r = 0; r < Size; r++)
+        for (int r = 0; r < _boardSize; r++)
         {
-            for (int c = 0; c < Size; c++)
+            for (int c = 0; c < _boardSize; c++)
             {
                 var btn = new Button()
                 {
@@ -61,8 +66,8 @@ public partial class ProblemaCaballoWindow : Window
 
     private void ResetBoard()
     {
-        for (int r = 0; r < Size; r++)
-            for (int c = 0; c < Size; c++)
+        for (int r = 0; r < _boardSize; r++)
+            for (int c = 0; c < _boardSize; c++)
             {
                 _states[r, c] = CellState.Empty;
                 _cells[r, c].Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A1A1A"));
@@ -95,14 +100,14 @@ public partial class ProblemaCaballoWindow : Window
 
     private void UpdateProgress()
     {
-        txtProgress.Text = $"Casillas visitadas: {_visitedCount} de {Size * Size}";
+        txtProgress.Text = $"Casillas visitadas: {_visitedCount} de {_boardSize * _boardSize}";
     }
 
     private void UpdateUsableMoves()
     {
         // clear previous usable marks
-        for (int r = 0; r < Size; r++)
-            for (int c = 0; c < Size; c++)
+        for (int r = 0; r < _boardSize; r++)
+            for (int c = 0; c < _boardSize; c++)
             {
                 if (_states[r, c] == CellState.Usable)
                 {
@@ -113,7 +118,7 @@ public partial class ProblemaCaballoWindow : Window
             }
 
         // compute new usable moves
-        var moves = _useCase.ObtenerMovimientosValidos(Size, BuildEstadoTablero(), _currentRow, _currentCol);
+        var moves = _useCase.ObtenerMovimientosValidos(_boardSize, BuildEstadoTablero(), _currentRow, _currentCol);
         foreach (var move in moves)
         {
             var r = move.Row;
@@ -124,7 +129,7 @@ public partial class ProblemaCaballoWindow : Window
         }
 
         // check end conditions
-        if (_visitedCount == Size * Size)
+        if (_visitedCount == _boardSize * _boardSize)
         {
             MessageBox.Show("¡Felicidades! Has completado el recorrido perfecto del caballo");
             ResetBoard();
@@ -138,10 +143,10 @@ public partial class ProblemaCaballoWindow : Window
 
     private int[,] BuildEstadoTablero()
     {
-        var estado = new int[Size, Size];
-        for (int r = 0; r < Size; r++)
+        var estado = new int[_boardSize, _boardSize];
+        for (int r = 0; r < _boardSize; r++)
         {
-            for (int c = 0; c < Size; c++)
+            for (int c = 0; c < _boardSize; c++)
             {
                 estado[r, c] = _states[r, c] is CellState.Visited or CellState.Current ? 1 : -1;
             }
@@ -186,6 +191,108 @@ public partial class ProblemaCaballoWindow : Window
     private void BtnRestart_Click(object sender, RoutedEventArgs e)
     {
         ResetBoard();
+    }
+
+    private bool TryReadConfiguration(out int size, out int startRow, out int startCol)
+    {
+        size = 0;
+        startRow = 0;
+        startCol = 0;
+
+        if (!int.TryParse(txtSize.Text, out size))
+        {
+            MessageBox.Show("El tamaño del tablero debe ser un número entero.");
+            return false;
+        }
+
+        if (size < 5 || size > 12)
+        {
+            MessageBox.Show("El tamaño del tablero debe estar entre 5 y 12.");
+            return false;
+        }
+
+        if (!int.TryParse(txtStartRow.Text, out startRow) || !int.TryParse(txtStartCol.Text, out startCol))
+        {
+            MessageBox.Show("La posición inicial (fila/columna) debe ser un número entero.");
+            return false;
+        }
+
+        if (startRow < 0 || startRow >= size || startCol < 0 || startCol >= size)
+        {
+            MessageBox.Show("La posición inicial debe estar dentro de los límites del tablero.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void ApplyBoardSize(int size)
+    {
+        if (_boardSize == size) return;
+        _boardSize = size;
+        BuildBoard();
+    }
+
+    private void RenderSolvedBoard(int[,] board)
+    {
+        for (int r = 0; r < _boardSize; r++)
+        {
+            for (int c = 0; c < _boardSize; c++)
+            {
+                int moveOrder = board[r, c];
+                _states[r, c] = CellState.Visited;
+                _cells[r, c].IsEnabled = false;
+                _cells[r, c].Content = (moveOrder + 1).ToString();
+
+                if (moveOrder == 0)
+                {
+                    _cells[r, c].Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50"));
+                }
+                else if (moveOrder == _boardSize * _boardSize - 1)
+                {
+                    _cells[r, c].Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFC107"));
+                }
+                else
+                {
+                    _cells[r, c].Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E53935"));
+                }
+            }
+        }
+
+        _visitedCount = _boardSize * _boardSize;
+        _gameStarted = true;
+        UpdateProgress();
+    }
+
+    private void BtnAplicarConfiguracion_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryReadConfiguration(out int size, out _, out _)) return;
+        ApplyBoardSize(size);
+        ResetBoard();
+    }
+
+    private void BtnIniciarConPosicion_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryReadConfiguration(out int size, out int startRow, out int startCol)) return;
+        ApplyBoardSize(size);
+        ResetBoard();
+        StartNewGame(startRow, startCol);
+    }
+
+    private void BtnResolverRecorrido_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryReadConfiguration(out int size, out int startRow, out int startCol)) return;
+        ApplyBoardSize(size);
+        ResetBoard();
+
+        var solvedBoard = _useCase.Resolver(_boardSize, startRow, startCol);
+        if (solvedBoard is null)
+        {
+            MessageBox.Show("No se encontró una solución para ese tamaño y posición inicial.");
+            return;
+        }
+
+        RenderSolvedBoard(solvedBoard);
     }
 
     private void BtnVolver_Click(object sender, RoutedEventArgs e)
