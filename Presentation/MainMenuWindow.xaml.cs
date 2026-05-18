@@ -65,4 +65,11 @@ public partial class MainMenuWindow : Window
         ventanaLaberinto.Show();
         this.Close();
     }
+
+    private void BtnAbrirWolfGoatCabbage_Click(object sender, RoutedEventArgs e)
+    {
+        WolfGoatCabbageWindow wolfGoatCabbageWindow = new WolfGoatCabbageWindow();
+        wolfGoatCabbageWindow.Show();
+        this.Close();
+    }
 }
