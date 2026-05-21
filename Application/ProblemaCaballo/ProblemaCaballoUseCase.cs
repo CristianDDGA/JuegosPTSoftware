@@ -1,72 +1,62 @@
 using System;
 using System.Collections.Generic;
+using Domain.ProblemaCaballo;
 
 namespace Application.ProblemaCaballo;
 
 public class ProblemaCaballoUseCase : IProblemaCaballoUseCase
 {
-    private readonly int[] dr = new int[] { -2, -1, 1, 2, 2, 1, -1, -2 };
-    private readonly int[] dc = new int[] { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    public int[,] Resolver(int n, int startRow, int startCol)
+    public int[,] Resolver(int boardSize, int startRow, int startColumn)
     {
-        int[,] board = new int[n, n];
-        for (int r = 0; r < n; r++)
-            for (int c = 0; c < n; c++)
-                board[r, c] = -1;
+        var board = new KnightBoard(boardSize);
+        board.SetValue(startRow, startColumn, 0);
 
-        board[startRow, startCol] = 0;
+        if (SolveBacktracking(board, startRow, startColumn, 1, boardSize))
+            return board.GetBoard();
 
-        if (Backtrack(board, startRow, startCol, 1, n))
-            return board;
-
-        return null!; // no solution
+        return null!;
     }
 
-    private bool IsValid(int r, int c, int n, int[,] board)
+    private bool SolveBacktracking(KnightBoard board, int currentRow, int currentColumn, int moveIndex, int boardSize)
     {
-        return r >= 0 && r < n && c >= 0 && c < n && board[r, c] == -1;
-    }
-
-    private bool Backtrack(int[,] board, int r, int c, int moveIndex, int n)
-    {
-        if (moveIndex == n * n)
+        if (moveIndex == boardSize * boardSize)
             return true;
 
-        // Warnsdorff heuristic: sort moves by number of onward moves
-        var moves = new List<(int nr, int nc, int degree)>();
-        for (int k = 0; k < 8; k++)
+        var moves = new List<(int nextRow, int nextColumn, int degree)>();
+        for (int directionIndex = 0; directionIndex < 8; directionIndex++)
         {
-            int nr = r + dr[k];
-            int nc = c + dc[k];
-            if (IsValid(nr, nc, n, board))
+            int nextRow = currentRow + KnightBoard.RowMoves[directionIndex];
+            int nextColumn = currentColumn + KnightBoard.ColumnMoves[directionIndex];
+
+            if (board.IsValidMove(nextRow, nextColumn))
             {
-                int deg = CountOnwardMoves(nr, nc, n, board);
-                moves.Add((nr, nc, deg));
+                int degree = CountOnwardMoves(board, nextRow, nextColumn, boardSize);
+                moves.Add((nextRow, nextColumn, degree));
             }
         }
 
-        moves.Sort((a, b) => a.degree.CompareTo(b.degree));
+        moves.Sort((first, second) => first.degree.CompareTo(second.degree));
 
-        foreach (var m in moves)
+        foreach (var move in moves)
         {
-            board[m.nr, m.nc] = moveIndex;
-            if (Backtrack(board, m.nr, m.nc, moveIndex + 1, n))
+            board.SetValue(move.nextRow, move.nextColumn, moveIndex);
+            if (SolveBacktracking(board, move.nextRow, move.nextColumn, moveIndex + 1, boardSize))
                 return true;
-            board[m.nr, m.nc] = -1;
+            board.SetValue(move.nextRow, move.nextColumn, -1);
         }
 
         return false;
     }
 
-    private int CountOnwardMoves(int r, int c, int n, int[,] board)
+    private int CountOnwardMoves(KnightBoard board, int row, int column, int boardSize)
     {
         int count = 0;
-        for (int k = 0; k < 8; k++)
+        for (int directionIndex = 0; directionIndex < 8; directionIndex++)
         {
-            int nr = r + dr[k];
-            int nc = c + dc[k];
-            if (IsValid(nr, nc, n, board)) count++;
+            int nextRow = row + KnightBoard.RowMoves[directionIndex];
+            int nextColumn = column + KnightBoard.ColumnMoves[directionIndex];
+            if (board.IsValidMove(nextRow, nextColumn))
+                count++;
         }
         return count;
     }

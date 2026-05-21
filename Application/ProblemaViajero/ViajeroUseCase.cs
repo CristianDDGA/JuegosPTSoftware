@@ -1,97 +1,76 @@
 ﻿using Domain.ProblemaViajero;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Application.ProblemaViajero;
-// La implementación concreta de la interfaz
+
 public class ViajeroUseCase : IViajeroUseCase
 {
-    private int _n;
-    private int[,]? _distancias;
-    private int _mejorDistancia;
-    private List<int>?_mejorRuta;
+    private int _cityCount;
+    private int[,]? _distances;
+    private int _bestDistance;
+    private List<int>? _bestRoute;
 
-    public ViajeroResult CalcularMejorRuta(int[,] matrizDistancias)
+    public ViajeroResult CalcularMejorRuta(int[,] distanceMatrix)
     {
-        _distancias = matrizDistancias;
-        _n = matrizDistancias.GetLength(0);
-        _mejorDistancia = int.MaxValue;
-        _mejorRuta = new List<int>();
+        _distances = distanceMatrix;
+        _cityCount = distanceMatrix.GetLength(0);
+        _bestDistance = int.MaxValue;
+        _bestRoute = new List<int>();
 
-        var rutaInicial = new List<int> { 0 };
-        ExplorarRutas(0, 1, rutaInicial, 0);
+        var initialRoute = new List<int> { 0 };
+        ExploreRoutes(0, 1, initialRoute, 0);
 
-        // --- LÓGICA DE DIBUJO MOVIDA AQUÍ ---
-        string mapa = "     A   B   C   D   E\n";
-        mapa += "   ---------------------\n";
-        for (int i = 0; i < _n; i++)
+        var steps = new List<string>();
+        for (int stepIndex = 0; stepIndex < _bestRoute.Count - 1; stepIndex++)
         {
-            mapa += $"{(char)('A' + i)} | ";
-            for (int j = 0; j < _n; j++)
-            {
-                mapa += $"{_distancias[i, j],2}  ";
-            }
-            mapa += "\n";
-        }
-        // ------------------------------------
-
-        var pasos = new List<string>();
-        for (int i = 0; i < _mejorRuta.Count - 1; i++)
-        {
-            int origen = _mejorRuta[i];
-            int destino = _mejorRuta[i + 1];
-            pasos.Add($"- Tramo {i + 1}: De {(char)('A' + origen)} a {(char)('A' + destino)} = {_distancias[origen, destino]} unid.");
+            int origin = _bestRoute[stepIndex];
+            int destination = _bestRoute[stepIndex + 1];
+            steps.Add($"- Tramo {stepIndex + 1}: De {(char)('A' + origin)} a {(char)('A' + destination)} = {_distances[origin, destination]} unid.");
         }
 
         return new ViajeroResult
         {
-            RutaOptima = _mejorRuta,
-            DistanciaTotal = _mejorDistancia,
-            DesglosePasos = pasos,
-            MapaVisual = mapa // Enviamos el mapa ya dibujado
+            RutaOptima = _bestRoute,
+            DistanciaTotal = _bestDistance,
+            DesglosePasos = steps
         };
     }
 
-    private void ExplorarRutas(int ciudadActual, int ciudadesVisitadas, List<int> rutaActual, int distanciaActual)
+    private void ExploreRoutes(int currentCity, int visitedCities, List<int> currentRoute, int currentDistance)
     {
-        // PODA
-        if (distanciaActual >= _mejorDistancia) return;
+        if (currentDistance >= _bestDistance) return;
 
-        // CASO BASE
-        if (ciudadesVisitadas == _n)
+        if (visitedCities == _cityCount)
         {
-            _mejorDistancia = distanciaActual;
-            _mejorRuta = new List<int>(rutaActual);
+            _bestDistance = currentDistance;
+            _bestRoute = new List<int>(currentRoute);
             return;
         }
 
-        // RAMIFICACIÓN + ORDENAMIENTO:
-        // exploramos primero las ciudades más cercanas para encontrar antes
-        // buenas soluciones y podar más ramas.
-        var candidatos = new List<int>();
-        for (int ciudad = 0; ciudad < _n; ciudad++)
+        var candidates = new List<int>();
+        for (int city = 0; city < _cityCount; city++)
         {
-            if (!rutaActual.Contains(ciudad))
+            if (!currentRoute.Contains(city))
             {
-                candidatos.Add(ciudad);
+                candidates.Add(city);
             }
         }
 
-        candidatos.Sort((a, b) => _distancias[ciudadActual, a].CompareTo(_distancias[ciudadActual, b]));
+        candidates.Sort((first, second) => _distances[currentCity, first].CompareTo(_distances[currentCity, second]));
 
-        foreach (int siguienteCiudad in candidatos)
+        foreach (int nextCity in candidates)
         {
-            rutaActual.Add(siguienteCiudad);
+            currentRoute.Add(nextCity);
 
-            ExplorarRutas(
-                siguienteCiudad,
-                ciudadesVisitadas + 1,
-                rutaActual,
-                distanciaActual + _distancias[ciudadActual, siguienteCiudad]
+            ExploreRoutes(
+                nextCity,
+                visitedCities + 1,
+                currentRoute,
+                currentDistance + _distances[currentCity, nextCity]
             );
 
-            rutaActual.RemoveAt(rutaActual.Count - 1);
+            currentRoute.RemoveAt(currentRoute.Count - 1);
         }
     }
 }

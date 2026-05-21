@@ -29,71 +29,62 @@ public class TicTacToeUseCase : ITicTacToeUseCase
         return Board.CheckStatus();
     }
 
-    // --- LÓGICA DE LA IA (MINIMAX) ---
-
     public void PlayComputerMove()
     {
         if (Board.CheckStatus() != GameStatus.InProgress) return;
 
         int bestScore = int.MinValue;
-        int[] bestMove = new int[] { -1, -1 };
+        int bestMoveRow = -1;
+        int bestMoveColumn = -1;
 
-        // Recorrer todo el tablero buscando la mejor jugada inicial
-        for (int i = 0; i < 3; i++)
+        for (int row = 0; row < 3; row++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int column = 0; column < 3; column++)
             {
-                if (Board.Grid[i, j] == Player.None)
+                if (Board.Grid[row, column] == Player.None)
                 {
-                    // 1. Simular jugada
-                    Board.MakeMove(i, j, Player.O);
+                    Board.MakeMove(row, column, Player.O);
 
-                    // 2. Evaluar qué pasaría usando Minimax (falso = es turno del humano)
                     int score = Minimax(Board, false);
 
-                    // 3. Deshacer la jugada simulada
-                    Board.UndoMove(i, j);
+                    Board.UndoMove(row, column);
 
-                    // 4. Si esta jugada da mejor puntaje, guardarla
                     if (score > bestScore)
                     {
                         bestScore = score;
-                        bestMove[0] = i;
-                        bestMove[1] = j;
+                        bestMoveRow = row;
+                        bestMoveColumn = column;
                     }
                 }
             }
         }
 
-        // Ejecutar la mejor jugada encontrada en el tablero real
-        if (bestMove[0] != -1)
+        if (bestMoveRow != -1)
         {
-            Board.MakeMove(bestMove[0], bestMove[1], Player.O);
+            Board.MakeMove(bestMoveRow, bestMoveColumn, Player.O);
         }
     }
 
-    // El algoritmo recursivo
     private int Minimax(TicTacToeBoard board, bool isMaximizing)
     {
         GameStatus status = board.CheckStatus();
 
-        // Condiciones de parada (hojas del árbol)
-        if (status == GameStatus.OWins) return 10;   // Gana IA
-        if (status == GameStatus.XWins) return -10;  // Gana Humano
-        if (status == GameStatus.Draw) return 0;     // Empate
+        if (status == GameStatus.OWins) return 10;
+        if (status == GameStatus.XWins) return -10;
+        if (status == GameStatus.Draw) return 0;
 
         if (isMaximizing)
         {
             int bestScore = int.MinValue;
-            for (int i = 0; i < 3; i++)
+            for (int row = 0; row < 3; row++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int column = 0; column < 3; column++)
                 {
-                    if (board.Grid[i, j] == Player.None)
+                    if (board.Grid[row, column] == Player.None)
                     {
-                        board.MakeMove(i, j, Player.O);
+                        board.MakeMove(row, column, Player.O);
                         bestScore = Math.Max(bestScore, Minimax(board, false));
-                        board.UndoMove(i, j);
+                        board.UndoMove(row, column);
                     }
                 }
             }
@@ -102,15 +93,15 @@ public class TicTacToeUseCase : ITicTacToeUseCase
         else
         {
             int bestScore = int.MaxValue;
-            for (int i = 0; i < 3; i++)
+            for (int row = 0; row < 3; row++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int column = 0; column < 3; column++)
                 {
-                    if (board.Grid[i, j] == Player.None)
+                    if (board.Grid[row, column] == Player.None)
                     {
-                        board.MakeMove(i, j, Player.X);
+                        board.MakeMove(row, column, Player.X);
                         bestScore = Math.Min(bestScore, Minimax(board, true));
-                        board.UndoMove(i, j);
+                        board.UndoMove(row, column);
                     }
                 }
             }

@@ -5,17 +5,17 @@ namespace Application.Maze;
 
 public class MazeUseCase : IMazeUseCase
 {
-    public List<(int, int)> FindPathBFS(MazeBoard board, (int, int) start, (int, int) end)
+    public List<(int row, int column)> FindPathBFS(MazeBoard board, (int row, int column) start, (int row, int column) end)
     {
-        var queue = new Queue<(int r, int c)>();
-        var parentMap = new Dictionary<(int, int), (int, int)>();
-        var visited = new HashSet<(int, int)>();
+        var queue = new Queue<(int row, int column)>();
+        var parentMap = new Dictionary<(int row, int column), (int row, int column)>();
+        var visited = new HashSet<(int row, int column)>();
 
         queue.Enqueue(start);
         visited.Add(start);
 
-        int[] dRow = { -1, 1, 0, 0 };
-        int[] dCol = { 0, 0, -1, 1 };
+        int[] rowOffsets = { -1, 1, 0, 0 };
+        int[] columnOffsets = { 0, 0, -1, 1 };
 
         while (queue.Count > 0)
         {
@@ -23,7 +23,7 @@ public class MazeUseCase : IMazeUseCase
 
             if (current == end)
             {
-                var path = new List<(int, int)>();
+                var path = new List<(int row, int column)>();
                 var step = end;
 
                 while (step != start)
@@ -37,21 +37,21 @@ public class MazeUseCase : IMazeUseCase
                 return path;
             }
 
-            for (int i = 0; i < 4; i++)
+            for (int directionIndex = 0; directionIndex < 4; directionIndex++)
             {
-                int nextRow = current.r + dRow[i];
-                int nextCol = current.c + dCol[i];
-                var nextPos = (nextRow, nextCol);
+                int nextRow = current.row + rowOffsets[directionIndex];
+                int nextColumn = current.column + columnOffsets[directionIndex];
+                var nextPosition = (nextRow, nextColumn);
 
-                if (board.IsValidMove(nextRow, nextCol) && !visited.Contains(nextPos))
+                if (board.IsValidMove(nextRow, nextColumn) && !visited.Contains(nextPosition))
                 {
-                    visited.Add(nextPos);
-                    queue.Enqueue(nextPos);
-                    parentMap[nextPos] = current;
+                    visited.Add(nextPosition);
+                    queue.Enqueue(nextPosition);
+                    parentMap[nextPosition] = current;
                 }
             }
         }
 
-        return new List<(int, int)>(); // Path not found
+        return new List<(int row, int column)>();
     }
 }

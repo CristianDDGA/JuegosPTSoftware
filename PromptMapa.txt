@@ -1,0 +1,363 @@
+1. Contexto actual del proyecto
+Ya existen juegos implementados dentro de la misma solución. Cada juego está organizado en las siguientes carpetas/proyectos (según Clean Architecture):
+
+Domain → Entidades, value objects, enumeraciones e interfaces de repositorios específicos del dominio.
+
+Application → Casos de uso (use cases), DTOs, interfaces para servicios externos.
+
+Infrastructure → Implementaciones concretas de repositorios, algoritmos, acceso a datos o archivos.
+
+Presentation → Interfaz de usuario (consola, Web API, etc.).
+
+Objetivo:
+
+Evaluar que los juegos existentes respeten la arquitectura, SOLID y nomenclatura clara.
+
+Refactorizar (solo nombres de variables y estructura de capas) sin modificar la lógica interna de los algoritmos de esos juegos.
+
+Construir el nuevo juego (Ruta más corta) desde cero siguiendo las mismas buenas prácticas.
+
+2. Evaluación de los juegos existentes
+Para cada juego ya implementado, revisa los siguientes puntos. Marca como Cumple o No cumple y, en caso negativo, anota la acción correctiva.
+
+2.1. Verificación de Clean Architecture
+Domain → No tiene referencias a Application, Infrastructure o Presentation.
+
+Application → Solo referencia a Domain. No tiene referencias directas a Infrastructure.
+
+Infrastructure → Implementa interfaces definidas en Application o Domain.
+
+Presentation → Solo referencia a Application (o Infrastructure a través de inyección de dependencias). No contiene lógica de negocio.
+
+2.2. Verificación de SOLID
+S (Single Responsibility): Cada clase tiene una única razón de cambio.
+
+Ejemplo: Un repositorio solo accede a datos; un caso de uso solo orquesta una operación.
+
+O (Open/Closed): Las entidades están abiertas para extensión (herencia o estrategias) pero cerradas para modificación.
+
+L (Liskov Substitution): Las implementaciones de interfaces pueden sustituirse sin alterar el comportamiento.
+
+I (Interface Segregation): Interfaces pequeñas y específicas (no interfaces “gordas”).
+
+D (Dependency Inversion): Los módulos de alto nivel (Application) dependen de abstracciones, no de implementaciones concretas.
+
+2.3. Verificación de nomenclatura y legibilidad
+Nombres de variables: Completos, sin abreviaturas.
+
+❌ Incorrecto: dst, curr, aux, i, j (excepto en índices de loops muy locales, prefiere index).
+
+✅ Correcto: destinationCity, currentNode, temporaryValue.
+
+Nombres de métodos: Verbos en infinitivo o imperativo, claros.
+
+❌ Calc() → ✅ CalculateShortestPath()
+
+Nombres de clases: Sustantivos en PascalCase.
+
+Comentarios: Solo cuando sea necesario explicar el “por qué”, no el “qué”.
+
+2.4. Refactorización permitida
+Cambiar nombres de variables, parámetros, métodos y clases (si el nombre original es confuso).
+
+Mover código entre capas si se detecta violación de arquitectura.
+
+Extraer interfaces si no existen.
+
+NO cambiar el flujo del algoritmo, las condiciones, las fórmulas matemáticas ni la estructura de datos interna (ej. no cambiar de List a HashSet si eso altera la lógica).
+
+Importante: Si un juego usa un algoritmo de búsqueda (BFS, DFS, Dijkstra, A*, etc.), ese algoritmo debe permanecer idéntico en su implementación interna; solo se modifica la presentación (nombres de variables, organización en capas).
+
+3. Construcción del nuevo juego: “Shortest Path Finder”
+A continuación se describen los pasos exactos para crear el juego de ruta más corta, respetando la arquitectura y las convenciones.
+
+3.1. Capa Domain
+Crear las siguientes clases dentro del proyecto Domain (o carpeta Domain si es un proyecto único).
+Usa nombres sin abreviaturas.
+
+City.cs
+csharp
+public class City
+{
+    public string Name { get; }
+    public double? Latitude { get; }      // opcional para A*
+    public double? Longitude { get; }
+
+    public City(string name, double? latitude = null, double? longitude = null)
+    {
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    // Para usar como clave en diccionarios (Value Object)
+    public override bool Equals(object obj) => obj is City other && Name == other.Name;
+    public override int GetHashCode() => Name.GetHashCode();
+}
+Distance.cs (Value Object)
+csharp
+public class Distance
+{
+    public double Kilometers { get; }
+    public Distance(double kilometers)
+    {
+        if (kilometers < 0) throw new ArgumentException("Distance cannot be negative");
+        Kilometers = kilometers;
+    }
+
+    public static Distance operator +(Distance a, Distance b) => new Distance(a.Kilometers + b.Kilometers);
+    // otros métodos...
+}
+Road.cs (Entidad)
+csharp
+public class Road
+{
+    public City Origin { get; }
+    public City Destination { get; }
+    public Distance Distance { get; }
+
+    public Road(City origin, City destination, Distance distance)
+    {
+        Origin = origin;
+        Destination = destination;
+        Distance = distance;
+    }
+
+    public City GetOtherCity(City city)
+    {
+        if (city.Equals(Origin)) return Destination;
+        if (city.Equals(Destination)) return Origin;
+        throw new InvalidOperationException("City not part of this road");
+    }
+}
+Interfaz de repositorio (Domain o Application?)
+Según Clean Architecture, las interfaces de repositorio pertenecen a Domain si representan conceptos del dominio, o a Application si son necesidades de la aplicación. Para este caso, creamos en Domain:
+
+csharp
+public interface IRoadRepository
+{
+    IReadOnlyList<Road> GetAllRoads();
+    IReadOnlyList<Road> GetRoadsFromCity(City city);
+}
+3.2. Capa Application
+DTOs
+csharp
+public class RouteResultDto
+{
+    public List<string> CityNames { get; set; }  // nombres en orden
+    public double TotalDistanceKilometers { get; set; }
+    public bool IsSuccess { get; set; }
+    public string ErrorMessage { get; set; }
+}
+Interfaz del algoritmo de búsqueda (Strategy)
+csharp
+public interface IShortestPathFinder
+{
+    RouteResultDto FindShortestPath(City start, City end, IRoadRepository roadRepository);
+}
+Caso de uso
+csharp
+public class FindShortestPathUseCase
+{
+    private readonly IShortestPathFinder _pathFinder;
+    private readonly IRoadRepository _roadRepository;
+
+    public FindShortestPathUseCase(IShortestPathFinder pathFinder, IRoadRepository roadRepository)
+    {
+        _pathFinder = pathFinder;
+        _roadRepository = roadRepository;
+    }
+
+    public RouteResultDto Execute(string startCityName, string endCityName)
+    {
+        // Validaciones y obtención de objetos City desde el repositorio
+        var allRoads = _roadRepository.GetAllRoads();
+        var allCities = allRoads.SelectMany(r => new[] { r.Origin, r.Destination }).Distinct().ToList();
+        var start = allCities.FirstOrDefault(c => c.Name == startCityName);
+        var end = allCities.FirstOrDefault(c => c.Name == endCityName);
+
+        if (start == null) return new RouteResultDto { IsSuccess = false, ErrorMessage = $"Start city '{startCityName}' not found" };
+        if (end == null) return new RouteResultDto { IsSuccess = false, ErrorMessage = $"End city '{endCityName}' not found" };
+
+        return _pathFinder.FindShortestPath(start, end, _roadRepository);
+    }
+}
+3.3. Capa Infrastructure
+Implementación de repositorio en memoria
+csharp
+public class InMemoryRoadRepository : IRoadRepository
+{
+    private readonly List<Road> _roads;
+
+    public InMemoryRoadRepository(List<Road> roads)
+    {
+        _roads = roads;
+    }
+
+    public IReadOnlyList<Road> GetAllRoads() => _roads.AsReadOnly();
+
+    public IReadOnlyList<Road> GetRoadsFromCity(City city)
+    {
+        return _roads.Where(r => r.Origin.Equals(city) || r.Destination.Equals(city)).ToList();
+    }
+}
+Implementación de Dijkstra (respetando nombres claros)
+csharp
+public class DijkstraShortestPathFinder : IShortestPathFinder
+{
+    public RouteResultDto FindShortestPath(City start, City end, IRoadRepository roadRepository)
+    {
+        // Diccionario de distancias mínimas conocidas
+        var shortestDistanceToCity = new Dictionary<City, double>();
+        var previousCityInPath = new Dictionary<City, City>();
+        var unvisitedCities = new HashSet<City>();
+
+        // Inicialización
+        foreach (var road in roadRepository.GetAllRoads())
+        {
+            unvisitedCities.Add(road.Origin);
+            unvisitedCities.Add(road.Destination);
+            shortestDistanceToCity[road.Origin] = double.PositiveInfinity;
+            shortestDistanceToCity[road.Destination] = double.PositiveInfinity;
+        }
+        shortestDistanceToCity[start] = 0;
+
+        // Cola de prioridad (usando la PriorityQueue de .NET)
+        var priorityQueue = new PriorityQueue<City, double>();
+        priorityQueue.Enqueue(start, 0);
+
+        while (priorityQueue.Count > 0)
+        {
+            var currentCity = priorityQueue.Dequeue();
+            if (currentCity.Equals(end))
+                break;
+
+            // Si la distancia registrada es mayor que la que tenemos, saltar
+            if (shortestDistanceToCity[currentCity] < priorityQueue.GetPriority(currentCity))
+                continue;
+
+            foreach (var road in roadRepository.GetRoadsFromCity(currentCity))
+            {
+                var neighborCity = road.GetOtherCity(currentCity);
+                double newDistance = shortestDistanceToCity[currentCity] + road.Distance.Kilometers;
+
+                if (newDistance < shortestDistanceToCity[neighborCity])
+                {
+                    shortestDistanceToCity[neighborCity] = newDistance;
+                    previousCityInPath[neighborCity] = currentCity;
+                    priorityQueue.Enqueue(neighborCity, newDistance);
+                }
+            }
+        }
+
+        // Construcción de la ruta
+        if (!previousCityInPath.ContainsKey(end) && !start.Equals(end))
+        {
+            return new RouteResultDto { IsSuccess = false, ErrorMessage = "No route found" };
+        }
+
+        var pathCities = new List<City>();
+        var current = end;
+        while (!current.Equals(start))
+        {
+            pathCities.Add(current);
+            current = previousCityInPath[current];
+        }
+        pathCities.Add(start);
+        pathCities.Reverse();
+
+        return new RouteResultDto
+        {
+            CityNames = pathCities.Select(c => c.Name).ToList(),
+            TotalDistanceKilometers = shortestDistanceToCity[end],
+            IsSuccess = true
+        };
+    }
+}
+AStarShortestPathFinder (similar, con heurística). Si las ciudades no tienen coordenadas, se puede omitir o usar una heurística trivial (0 → Dijkstra). En este ejemplo se asume que se implementa solo si existe coordenadas.
+3.4. Capa Presentation (Consola)
+csharp
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Configurar DI (Dependency Injection) de .NET
+        var services = new ServiceCollection();
+        services.AddSingleton<IRoadRepository>(provider => BuildRoadRepository());
+        services.AddSingleton<IShortestPathFinder, DijkstraShortestPathFinder>();
+        services.AddTransient<FindShortestPathUseCase>();
+
+        var serviceProvider = services.BuildServiceProvider();
+        var useCase = serviceProvider.GetRequiredService<FindShortestPathUseCase>();
+
+        Console.WriteLine("=== Shortest Path Finder ===");
+        Console.Write("Enter start city: ");
+        string startName = Console.ReadLine();
+        Console.Write("Enter destination city: ");
+        string endName = Console.ReadLine();
+
+        var result = useCase.Execute(startName, endName);
+        if (result.IsSuccess)
+        {
+            Console.WriteLine($"Route: {string.Join(" -> ", result.CityNames)}");
+            Console.WriteLine($"Total distance: {result.TotalDistanceKilometers} km");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {result.ErrorMessage}");
+        }
+    }
+
+    static InMemoryRoadRepository BuildRoadRepository()
+    {
+        var quito = new City("Quito");
+        var ambato = new City("Ambato");
+        var riobamba = new City("Riobamba");
+        var cuenca = new City("Cuenca");
+
+        var roads = new List<Road>
+        {
+            new Road(quito, ambato, new Distance(120)),
+            new Road(ambato, riobamba, new Distance(60)),
+            new Road(riobamba, cuenca, new Distance(200))
+        };
+        return new InMemoryRoadRepository(roads);
+    }
+}
+4. Instrucciones generales para el programador o IA
+Antes de escribir código nuevo, revisa cada juego existente usando la lista de verificación del punto 2.
+
+Refactoriza los juegos que no cumplan:
+
+Renombra todas las variables para que sean descriptivas (ej. d → distance, pq → priorityQueue, c → currentCity).
+
+Mueve clases entre carpetas según la capa que corresponda.
+
+Extrae interfaces si una clase concreta es usada directamente en Application.
+
+No cambies el algoritmo: si el juego usaba una búsqueda en anchura (BFS) con cola simple, que siga siendo BFS.
+
+Para el nuevo juego (Shortest Path Finder):
+
+Crea los archivos exactamente como se muestran en la sección 3, respetando nombres y organización.
+
+Asegúrate de que cada capa esté en un proyecto separado (si la solución ya usa proyectos).
+
+Verifica que no haya dependencias circulares.
+
+Compila y prueba con el ejemplo dado (Quito → Cuenca debe dar 380 km y la ruta Quito→Ambato→Riobamba→Cuenca).
+
+Documentación: Escribe comentarios solo cuando la intención del código no sea evidente. No comentes líneas obvias como // suma 1 al contador.
+
+5. Criterios de aceptación
+Todos los juegos existentes pasan la evaluación de Clean Architecture y nomenclatura.
+
+Las variables en todo el código fuente usan nombres completos y legibles (sin dst, tmp, aux, i excepto contadores locales con nombre index).
+
+El nuevo juego implementa Dijkstra (o A*) correctamente.
+
+La solución compila sin errores en .NET 10.
+
+La presentación permite ingresar nombres de ciudades y muestra la ruta detallada.
+
+Se respeta el patrón Strategy (IShortestPathFinder) para poder intercambiar algoritmos fácilmente.

@@ -72,4 +72,11 @@ public partial class MainMenuWindow : Window
         wolfGoatCabbageWindow.Show();
         this.Close();
     }
+
+    private void BtnShortestPath_Click(object sender, RoutedEventArgs e)
+    {
+        ShortestPathFinderWindow ventana = new ShortestPathFinderWindow();
+        ventana.Show();
+        this.Close();
+    }
 }

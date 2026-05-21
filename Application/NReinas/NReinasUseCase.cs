@@ -1,50 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Domain.NReinas;
 
 namespace Application.NReinas;
+
 public class NReinasUseCase : INReinasUseCase
 {
-    private List<int[]>?soluciones;
+    private List<int[]>? _solutions;
 
-    public List<int[]> Resolver(int n)
+    public List<int[]> Resolver(int boardSize)
     {
-        soluciones = new List<int[]>();
-        int[] tablero = new int[n];
-        Backtracking(tablero, 0, n);
-        return soluciones;
+        _solutions = new List<int[]>();
+        var board = new NReinasBoard(boardSize);
+        SolveBacktracking(board, 0, boardSize);
+        return _solutions;
     }
 
-    private void Backtracking(int[] tablero, int fila, int n)
+    private void SolveBacktracking(NReinasBoard board, int currentRow, int boardSize)
     {
-        if (fila == n)
+        if (currentRow == boardSize)
         {
-            soluciones.Add((int[])tablero.Clone());
+            _solutions.Add(board.CloneBoard());
             return;
         }
 
-        for (int col = 0; col < n; col++)
+        for (int column = 0; column < boardSize; column++)
         {
-            if (EsSeguro(tablero, fila, col))
+            if (board.IsSafe(currentRow, column))
             {
-                tablero[fila] = col;
-                Backtracking(tablero, fila + 1, n);
+                board.PlaceQueen(currentRow, column);
+                SolveBacktracking(board, currentRow + 1, boardSize);
             }
         }
-    }
-
-    private bool EsSeguro(int[] tablero, int fila, int col)
-    {
-        for (int i = 0; i < fila; i++)
-        {
-            int columnaOcupada = tablero[i];
-            // Misma columna o diagonales
-            if (columnaOcupada == col ||
-                Math.Abs(columnaOcupada - col) == Math.Abs(i - fila))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 }

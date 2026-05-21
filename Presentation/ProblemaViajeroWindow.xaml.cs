@@ -1,16 +1,7 @@
 ﻿using Application.ProblemaViajero;
-using Domain.ProblemaViajero;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Presentation
 {
@@ -26,27 +17,25 @@ namespace Presentation
 
         private void btnResolver_Click(object sender, RoutedEventArgs e)
         {
-            // OJO: En el futuro, esta matriz debería leerse desde un archivo .txt usando 
-            // la capa "Infrastructure" (igual que hacen con su Laberinto). 
-            // Por ahora, se la mandamos a la capa de Aplicación.
-            int[,] distancias = new int[,]
+            int[,] distanceMatrix = new int[,]
             {
-        { 0, 12, 29, 22, 13 },
-        { 12, 0, 19, 3, 25 },
-        { 29, 19, 0, 21, 5 },
-        { 22, 3, 21, 0, 14 },
-        { 13, 25, 5, 14, 0 }
+                { 0, 12, 29, 22, 13 },
+                { 12, 0, 19, 3, 25 },
+                { 29, 19, 0, 21, 5 },
+                { 22, 3, 21, 0, 14 },
+                { 13, 25, 5, 14, 0 }
             };
 
-            var resultado = _viajeroUseCase.CalcularMejorRuta(distancias);
+            var resultado = _viajeroUseCase.CalcularMejorRuta(distanceMatrix);
 
-            // La vista vuelve a ser "tonta": Solo une los textos y los muestra.
+            string visualMap = BuildMatrixVisual(distanceMatrix);
+
             string reporte = "=== REPORTE DETALLADO DEL VIAJE ===\n\n";
 
             reporte += "1. MATRIZ DE DISTANCIAS (El Mapa)\n";
-            reporte += resultado.MapaVisual + "\n";
+            reporte += visualMap + "\n";
 
-            string rutaLetras = string.Join(" -> ", resultado.RutaOptima.ConvertAll(c => (char)('A' + c)));
+            string rutaLetras = string.Join(" -> ", resultado.RutaOptima.ConvertAll(city => (char)('A' + city)));
             reporte += "2. RUTA MÁS EFICIENTE\n";
             reporte += $"{rutaLetras}\n\n";
 
@@ -59,6 +48,24 @@ namespace Presentation
 
             txtResultado.Text = reporte;
         }
+
+        private static string BuildMatrixVisual(int[,] matrix)
+        {
+            int size = matrix.GetLength(0);
+            string visual = "     A   B   C   D   E\n";
+            visual += "   ---------------------\n";
+            for (int rowIndex = 0; rowIndex < size; rowIndex++)
+            {
+                visual += $"{(char)('A' + rowIndex)} | ";
+                for (int colIndex = 0; colIndex < size; colIndex++)
+                {
+                    visual += $"{matrix[rowIndex, colIndex],2}  ";
+                }
+                visual += "\n";
+            }
+            return visual;
+        }
+
         private void BtnVolver_Click(object sender, RoutedEventArgs e)
         {
             MainMenuWindow menu = new MainMenuWindow();
