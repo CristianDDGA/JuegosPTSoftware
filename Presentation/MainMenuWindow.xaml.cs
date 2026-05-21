@@ -79,4 +79,11 @@ public partial class MainMenuWindow : Window
         ventana.Show();
         this.Close();
     }
+
+    private void BtnMissionariesCannibals_Click(object sender, RoutedEventArgs e)
+    {
+        MissionariesCannibalsWindow ventana = new MissionariesCannibalsWindow();
+        ventana.Show();
+        this.Close();
+    }
 }
