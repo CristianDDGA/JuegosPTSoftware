@@ -1,0 +1,63 @@
+<Window x:Class="Presentation.MapColoringWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Problema de Coloreo de Mapas" Height="600" Width="680" WindowStartupLocation="CenterScreen" Background="#071018">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,12">
+            <TextBlock Text="PROBLEMA DE COLOREO DE MAPAS" FontSize="22" FontWeight="Bold" Foreground="#7EE6C9" HorizontalAlignment="Center"/>
+            <TextBlock Text="El mapa se modela como un grafo: cada región es un nodo y cada línea une regiones vecinas" FontSize="13" Foreground="#B8C7D6" HorizontalAlignment="Center" Margin="0,6,0,0" TextWrapping="Wrap" Width="560"/>
+        </StackPanel>
+
+        <Border Grid.Row="0" Margin="0,84,0,0" HorizontalAlignment="Center" Background="#081018" CornerRadius="8" Padding="10">
+            <StackPanel Width="540">
+                <TextBlock Text="Explicación del algoritmo" Foreground="#7EE6C9" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Text="El algoritmo Backtracking prueba colores válidos para cada nodo y retrocede cuando encuentra conflictos." Foreground="#DFF8EE" TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Leyenda de colores -->
+        <Border Grid.Row="1" Background="#081018" CornerRadius="10" Padding="8" HorizontalAlignment="Center" Margin="0,8,0,12">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="12,0" VerticalAlignment="Center">
+                <Rectangle Width="18" Height="18" Fill="#FF5A5A" RadiusX="4" RadiusY="4"/>
+                <TextBlock Text="  Rojo" Foreground="#EAF6FF" Margin="6,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="12,0" VerticalAlignment="Center">
+                <Rectangle Width="18" Height="18" Fill="#5AFF9A" RadiusX="4" RadiusY="4"/>
+                <TextBlock Text="  Verde" Foreground="#EAF6FF" Margin="6,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="12,0" VerticalAlignment="Center">
+                <Rectangle Width="18" Height="18" Fill="#5AC8FF" RadiusX="4" RadiusY="4"/>
+                <TextBlock Text="  Azul" Foreground="#EAF6FF" Margin="6,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="12,0" VerticalAlignment="Center">
+                <Rectangle Width="18" Height="18" Fill="#FFE65A" RadiusX="4" RadiusY="4"/>
+                <TextBlock Text="  Amarillo" Foreground="#071018" Margin="6,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,56,0,12">
+            <Button x:Name="BtnSolve" Content="Resolver" Width="140" Height="36" Margin="6" Click="BtnSolve_Click" ToolTip="Asignar colores automáticamente, paso a paso"/>
+            <Button x:Name="BtnReset" Content="Reiniciar" Width="140" Height="36" Margin="6" Click="BtnReset_Click" ToolTip="Borrar las asignaciones actuales"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Margin="0,98,0,0" HorizontalAlignment="Center" Background="#0C1A26" CornerRadius="10" Padding="8">
+            <TextBlock x:Name="TxtStatus" Text="Pulsa Resolver para ver el backtracking en acción." Foreground="#B8C7D6" HorizontalAlignment="Center" TextWrapping="Wrap" Width="560" TextAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="2" Background="#09131D" CornerRadius="18" BorderBrush="#223046" BorderThickness="1" Padding="12">
+            <Canvas x:Name="GraphCanvas" Width="620" Height="340" Background="#09131D"/>
+        </Border>
+
+        <Button Grid.Row="3" Content="Volver al Menú" Height="38" Margin="0,12,0,0" HorizontalAlignment="Center" Width="200" Click="BtnBack_Click"/>
+    </Grid>
+</Window>

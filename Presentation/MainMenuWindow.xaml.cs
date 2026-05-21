@@ -73,6 +73,13 @@ public partial class MainMenuWindow : Window
         this.Close();
     }
 
+    private void BtnAbrirMapColoring_Click(object sender, RoutedEventArgs e)
+    {
+        MapColoringWindow window = new MapColoringWindow();
+        window.Show();
+        this.Close();
+    }
+
     private void BtnShortestPath_Click(object sender, RoutedEventArgs e)
     {
         ShortestPathFinderWindow ventana = new ShortestPathFinderWindow();

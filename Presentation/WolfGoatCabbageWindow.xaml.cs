@@ -65,6 +65,7 @@ public partial class WolfGoatCabbageWindow : Window
                 ActionText = actionText,
                 LeftSideText = FormatSide(state, RiverSide.Left),
                 RightSideText = FormatSide(state, RiverSide.Right)
+                , IsExpanded = isInitialStep
             });
         }
     }
@@ -88,5 +89,6 @@ public partial class WolfGoatCabbageWindow : Window
         public string ActionText { get; set; } = string.Empty;
         public string LeftSideText { get; set; } = string.Empty;
         public string RightSideText { get; set; } = string.Empty;
+        public bool IsExpanded { get; set; }
     }
 }

@@ -11,8 +11,10 @@
         <Button Content="3. Laberinto (Alexis)" Margin="0,5" Height="35" Background="#00AAFF" Foreground="White" FontWeight="Bold" Click="BtnLaberinto_Click"/>
         <Button Content="4. Agente Viajero (Miranda)" Margin="0,5" Height="35" Background="#D15FE8" Foreground="White" Click="btnAbrirViajero_Click"/>
         <Button Content="5. Lobo, Cabra y Col" Margin="0,5" Height="35" Background="#FFB000" Foreground="Black" FontWeight="Bold" Click="BtnAbrirWolfGoatCabbage_Click"/>
-        <Button Content="6. Tic-Tac-Toe (Cristian)" Margin="0,5" Height="35" Background="#FF0055" Foreground="White" FontWeight="Bold" Click="BtnTicTacToe_Click"/>
+        <Button Content="6. Problema de Coloreo de Mapas" Margin="0,5" Height="35" Background="#8EE6A8" Foreground="#071018" FontWeight="Bold" Click="BtnAbrirMapColoring_Click"/>
+        <Button Content="7. Tic-Tac-Toe (Cristian)" Margin="0,5" Height="35" Background="#FF0055" Foreground="White" FontWeight="Bold" Click="BtnTicTacToe_Click"/>
         <Button Content="7. Shortest Path Finder" Margin="0,5" Height="35" Background="#00FFCC" Foreground="Black" FontWeight="Bold" Click="BtnShortestPath_Click"/>
         <Button Content="8. Misioneros y Caníbales (BFS)" Margin="0,5" Height="35" Background="#9B8CFF" Foreground="#0B0818" FontWeight="Bold" Click="BtnMissionariesCannibals_Click"/>
+        <Button Content="9. Problema de Coloreo de Mapas" Margin="0,5" Height="35" Background="#8EE6A8" Foreground="#071018" FontWeight="Bold" Click="BtnAbrirMapColoring_Click"/>
     </StackPanel>
 </Window>

@@ -81,39 +81,53 @@
                     <ItemsControl x:Name="StepsItemsControl">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,0,0,12" Padding="14" CornerRadius="12" Background="#0D131A" BorderBrush="#2D3D52" BorderThickness="1">
-                                    <StackPanel>
-                                        <DockPanel Margin="0,0,0,10">
-                                            <Border Width="92" Height="28" CornerRadius="14" Background="#00FFC8" DockPanel.Dock="Left">
-                                                <TextBlock Text="{Binding BadgeText}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#071018" FontWeight="Bold" FontSize="12"/>
-                                            </Border>
-                                            <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                                        </DockPanel>
+                                <Expander Margin="0,0,0,8" IsExpanded="{Binding IsExpanded}">
+                                    <Expander.Header>
+                                        <Border Padding="12,8" CornerRadius="10" Background="#0D131A" BorderBrush="#2D3D52" BorderThickness="1" Width="540">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="{Binding ActionText}" Foreground="#A7B3C0" FontSize="13" FontStyle="Italic" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                                                <Border Width="72" Height="24" CornerRadius="12" Background="#00FFC8" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding BadgeText}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#071018" FontWeight="Bold" FontSize="11"/>
+                                                </Border>
 
+                                                <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                                                    <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                                                    <TextBlock Text="{Binding ActionText}" Foreground="#A7B3C0" FontSize="12" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2" Text="Detalles" Foreground="#7EE6C9" FontSize="12" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </Expander.Header>
+
+                                    <Border Margin="0,6,0,2" Background="#0B1219" CornerRadius="10" BorderBrush="#2D3D52" BorderThickness="1" Padding="10">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <Border Grid.Column="0" Margin="0,0,8,0" Background="#111A24" CornerRadius="10" Padding="12">
+                                            <Border Grid.Column="0" Margin="0,0,6,0" Background="#111A24" CornerRadius="8" Padding="10">
                                                 <StackPanel>
-                                                    <TextBlock Text="Izquierda" Foreground="#86F7D4" FontWeight="Bold" FontSize="12"/>
-                                                    <TextBlock Text="{Binding LeftSideText}" Foreground="#EEF5FF" FontSize="14" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                    <TextBlock Text="Izquierda" Foreground="#86F7D4" FontWeight="Bold" FontSize="11"/>
+                                                    <TextBlock Text="{Binding LeftSideText}" Foreground="#EEF5FF" FontSize="13" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                                 </StackPanel>
                                             </Border>
 
-                                            <Border Grid.Column="1" Margin="8,0,0,0" Background="#111A24" CornerRadius="10" Padding="12">
+                                            <Border Grid.Column="1" Margin="6,0,0,0" Background="#111A24" CornerRadius="8" Padding="10">
                                                 <StackPanel>
-                                                    <TextBlock Text="Derecha" Foreground="#86F7D4" FontWeight="Bold" FontSize="12"/>
-                                                    <TextBlock Text="{Binding RightSideText}" Foreground="#EEF5FF" FontSize="14" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                    <TextBlock Text="Derecha" Foreground="#86F7D4" FontWeight="Bold" FontSize="11"/>
+                                                    <TextBlock Text="{Binding RightSideText}" Foreground="#EEF5FF" FontSize="13" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
-                                    </StackPanel>
-                                </Border>
+                                    </Border>
+                                </Expander>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
