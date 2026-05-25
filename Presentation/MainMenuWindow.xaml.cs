@@ -86,6 +86,12 @@ public partial class MainMenuWindow : Window
         ventana.Show();
         this.Close();
     }
+    private void BtnJarraAgua_Click(object sender, RoutedEventArgs e)
+    {
+        JarraAguaWindow ventana = new JarraAguaWindow();
+        ventana.Show();
+        this.Close();
+    }
 
     private void BtnMissionariesCannibals_Click(object sender, RoutedEventArgs e)
     {

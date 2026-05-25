@@ -1,16 +1,17 @@
 ﻿<Window x:Class="Presentation.MainMenuWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Patrones de Búsqueda - FISEI" Height="500" Width="350" WindowStartupLocation="CenterScreen" Background="#0D0D0D">
+        Title="Patrones de Búsqueda - FISEI" Height="700" Width="420" WindowStartupLocation="CenterScreen" Background="#0D0D0D">
 
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-        <TextBlock Text="MENÚ PRINCIPAL" FontSize="24" FontWeight="Bold" Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="340">
+        <TextBlock Text="MENÚ PRINCIPAL" FontSize="28" FontWeight="Bold" Foreground="#00FFCC" HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
         <Button Content="1. N Reinas (Jumbo)" Margin="0,5" Height="35" Background="Coral" Foreground="White" Click="btnAbrirNReinas_Click"/>
         <Button Content="2. Caballo Ajedrez (Matias)" Margin="0,5" Height="35" Background="#62E548" Foreground="White" Click="btnAbrirCaballo_Click"/>
         <Button Content="3. Laberinto (Alexis)" Margin="0,5" Height="35" Background="#00AAFF" Foreground="White" FontWeight="Bold" Click="BtnLaberinto_Click"/>
         <Button Content="4. Agente Viajero (Miranda)" Margin="0,5" Height="35" Background="#D15FE8" Foreground="White" Click="btnAbrirViajero_Click"/>
         <Button Content="5. Tic-Tac-Toe (Cristian)" Margin="0,5" Height="35" Background="#FF0055" Foreground="White" FontWeight="Bold" Click="BtnTicTacToe_Click"/>
+        <Button Content="6. Jarra de Agua" Margin="0,5" Height="35" Background="#00CFFF" Foreground="White" FontWeight="Bold" Click="BtnJarraAgua_Click"/>
         <Button Content="7. Misioneros y Caníbales (BFS)" Margin="0,5" Height="35" Background="#9B8CFF" Foreground="#0B0818" FontWeight="Bold" Click="BtnMissionariesCannibals_Click"/>
         <Button Content="8. Lobo, Cabra y Col" Margin="0,5" Height="35" Background="#FFB000" Foreground="Black" FontWeight="Bold" Click="BtnAbrirWolfGoatCabbage_Click"/>
         <Button Content="9. Problema de Coloreo de Mapas" Margin="0,5" Height="35" Background="#8EE6A8" Foreground="#071018" FontWeight="Bold" Click="BtnAbrirMapColoring_Click"/>
